@@ -9,12 +9,20 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    amdprocessor.cpp \
+    computer.cpp \
+    intelprocessor.cpp \
     ioccontainer.cpp \
+    iprocessor.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
+    amdprocessor.h \
+    computer.h \
+    intelprocessor.h \
     ioccontainer.h \
+    iprocessor.h \
     mainwindow.h
 
 FORMS += \
