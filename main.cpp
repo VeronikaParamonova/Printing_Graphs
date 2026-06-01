@@ -2,6 +2,11 @@
 
 #include <QApplication>
 #include "ioccontainer.h"
+#include <functional>
+#include <iostream>
+#include <memory>
+#include <map>
+#include <string>
 
 int main(int argc, char *argv[])
 {
