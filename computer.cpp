@@ -1,6 +1,7 @@
 #include "computer.h"
+#include <iostream>
 
-Computer::Computer()
+void Computer::GetInfo()
 {
-
+    std::cout << "Computer configuration: " << m_proc->GetProcessorInfo() << std::endl;
 }

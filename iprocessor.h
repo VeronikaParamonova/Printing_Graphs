@@ -5,9 +5,16 @@
 
 class IPRocessor
 {
+
 public:
+    enum ProcessorType
+    {
+        x86,
+        x64
+    };
+
     IPRocessor();
-    virtual ~IProcessor() = default;
+    virtual ~IPRocessor() = default;
     virtual std::string GetProcessorInfo() = 0;
 };
 
