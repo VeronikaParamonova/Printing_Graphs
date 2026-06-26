@@ -1,42 +1,58 @@
-#include "mainwindow.h"
-
-#include <QApplication>
-#include "ioccontainer.h"
-#include <functional>
-#include <iostream>
+#include <QCoreApplication>//для прил c GUI
+#include <QApplication> //для прил без GUI
+#include <QDebug>
 #include <memory>
-#include <map>
-#include <string>
+#include "ModelData.h"
+#include "IAdapter.h"
+#include "SqlAdaptee.h"
+#include "JsonAdaptee.h"
+#include "SqlAdapter.h"
+#include "JsonAdapter.h"
+#include "ioccontainer.h"
+#include <QFileInfo>
+#include <QStringList>
+#include "mainwindow.h"
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QApplication app(argc, argv);
 
-    //------Example #1----------------
-    //Injector injector;
-    IOCContainer injector;
+    auto container = std::make_shared<IOCContainer>();
 
-    // Регистрируем IHello с классом Hello, т.о. каждый раз запрашивая IHell получаем объект Hello.
-    injector.RegisterInstance<IHello, Hello>();
-    auto helloInstance = injector.GetObject<IHello>();
-    helloInstance->hello();
-    injector.RegisterInstance<IHello, Privet>();
+    // Регистрируем Adaptee (синглтоны)
+    container->RegisterInstance<SqlAdaptee>(std::make_shared<SqlAdaptee>());
+    container->RegisterInstance<JsonAdaptee>(std::make_shared<JsonAdaptee>());
 
-    //Здесь, после регистрации получим объект Privet
-    helloInstance = injector.GetObject<IHello>();
-    helloInstance->hello();
+     // Регистрируем Adapter (конкретные адаптеры)
+    container->RegisterFactory<SqlAdapter, SqlAdapter, SqlAdaptee>();
+    container->RegisterFactory<JsonAdapter, JsonAdapter, JsonAdaptee>();
 
-    //------Example #2----------------
+    // Регистрируем ОДИН адаптер для IAdapter
+    container->RegisterAdapter<IAdapter>(
+        // Условие: принимает ЛЮБОЙ файл, который мы поддерживаем
+        [](const QString& path) {
+            return path.endsWith(".db") || path.endsWith(".sqlite") || path.endsWith(".sqlite3") || path.endsWith(".json");
+        },
+        // Фабрика: выбирает адаптер по расширению файла
+        [&container](const QString& path) -> std::shared_ptr<IAdapter> {
+            if (path.endsWith(".db") || path.endsWith(".sqlite") || path.endsWith(".sqlite3"))
+            {
+                return std::static_pointer_cast<IAdapter>(container->GetObject<SqlAdapter>());
+            }
+            else if (path.endsWith(".json"))
+            {
+                return std::static_pointer_cast<IAdapter>(container->GetObject<JsonAdapter>());
+            }
+            return nullptr;
+        }
+        );
 
-    gContainer.RegisterInstance<IAmAThing, TheThing>();
-    gContainer.RegisterFactory<IAmTheOtherThing, TheOtherThing, IAmAThing>();
+    // Регистрируем графики в контейнере
+    container->RegisterInstance<IChart>(std::make_shared<BarChart>(), "BarChart");
+    container->RegisterInstance<IChart>(std::make_shared<LineChart>(), "LineChart");
 
-    gContainer.GetObject<IAmAThing>()->TestThis();
-    gContainer.GetObject<IAmTheOtherThing>()->TheOtherTest();
+    MainWindow window(container);
+    window.show();
 
-    //Опять запршиваем объект,после последней регистрации получим объект Privet
-    helloInstance = injector.GetObject<IHello>();
-    helloInstance->hello();
-
-    return a.exec();
+    return app.exec();
 }
