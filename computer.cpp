@@ -3,5 +3,5 @@
 
 void Computer::GetInfo()
 {
-    std::cout << "Computer configuration: " << m_proc->GetProcessorInfo() << std::endl;
+    emit logInfo("Computer configuration: " + m_proc->GetProcessorInfo());
 }

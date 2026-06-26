@@ -11,18 +11,22 @@ CONFIG += c++17
 SOURCES += \
     amdprocessor.cpp \
     computer.cpp \
+    ilog.cpp \
     intelprocessor.cpp \
     ioccontainer.cpp \
     iprocessor.cpp \
+    logtoconsole.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     amdprocessor.h \
     computer.h \
+    ilog.h \
     intelprocessor.h \
     ioccontainer.h \
     iprocessor.h \
+    logtoconsole.h \
     mainwindow.h
 
 FORMS += \

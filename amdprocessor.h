@@ -5,18 +5,35 @@
 #include <string>
 
 
-class AMDProcessor: public IPRocessor
+class AMDProcessor: public IProcessor
 {
+    Q_OBJECT
+
 public:
-    AMDProcessor(IPRocessor::ProcessorType type, double speed, const std::string vers) : m_speed(speed), m_type(type), m_vers(vers) {}
+    AMDProcessor(IProcessor::ProcessorType type, double speed, const std::string vers) : m_type(type), m_speed(speed), m_vers(vers) {}
     std::string GetProcessorInfo() override
     {
-        return ("AMD Processor for" + m_vers + m_speed + m_type);
+        std::string type_s;
+        if (m_type == IProcessor::x64)
+        {
+            type_s = "x64";
+        }
+        else
+        {
+            type_s = "x86";
+        }
+        std::string res = "AMD Processor for " + type_s + ", " + std::to_string(m_speed) + ", " + m_vers;
+        return(res);
     }
-private:
-    std::string m_vers;
-    IPRocessor::ProcessorType m_type;
+    void LogProcessorInfo() override
+    {
+        std::string inf = GetProcessorInfo();
+        emit logInfo(inf);
+    }
+private:    
+    IProcessor::ProcessorType m_type;
     double m_speed;
+    std::string m_vers;
 };
 
 #endif // AMDPROCESSOR_H
