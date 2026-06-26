@@ -1,0 +1,12 @@
+{
+    "metadata": {
+        "source": "test",
+        "description": "nested data"
+    },
+    "data": {
+        "values": [
+            {"date": "2024-01-01", "value": 10.5},
+            {"date": "2024-01-02", "value": 12.3}
+        ]
+    }
+}
